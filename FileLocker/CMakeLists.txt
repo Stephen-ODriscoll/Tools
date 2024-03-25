@@ -1,4 +1,6 @@
 
+project(FileLocker)
+
 add_executable(
-    FileLocker
+    ${PROJECT_NAME}
     Main.cpp)

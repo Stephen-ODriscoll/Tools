@@ -1,4 +1,6 @@
 
+project(BitChecker)
+
 add_executable(
-    BitChecker
+    ${PROJECT_NAME}
     Main.cpp)

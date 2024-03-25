@@ -1,0 +1,26 @@
+Windbg Commands:
+
+    General Info:
+        !analyze -v
+    
+    Stack:
+        ~0 k
+        ~* k
+    
+    Memory:
+        !address
+        !address -summary
+        !address -f:Heap,Stack,MEM_COMMIT
+    
+    Modules:
+        lm v
+    
+    32 Bit:
+        !load wow64exts
+        !sw
+
+
+Procdump Commands:
+    
+    Wait for unhandled exception:
+        procdump -ma -e -w <process name>
