@@ -65,7 +65,7 @@ int main(int argc, char* argv[])
         
         unsigned long long number{};
         ListBits listBits{ ListBits::All };
-        for (int i = 1; i < argc; ++i)
+        for (int i{ 1 }; i < argc; ++i)
         {
             if (!stricmp(argv[i], "-la") || !stricmp(argv[i], "--list-all"))
             {
@@ -107,18 +107,17 @@ int main(int argc, char* argv[])
                     number = std::stoull(argv[i], nullptr, 2);
                 }
             }
+            else if (!strnicmp(argv[i], "0x", 2))
+            {
+                number = std::stoull(argv[i], nullptr, 16);
+            }
+            else if (!strnicmp(argv[i], "0", 1))
+            {
+                number = std::stoull(argv[i], nullptr, 8);
+            }
             else
             {
-                try
-                {
-                    number = std::stoull(argv[i]);
-                }
-                catch (const std::exception&)
-                {
-                    // This argument defaulted to the number
-                    // In case this was a typo, throw a more generic exception
-                    throw std::exception("Incorrect argument");
-                }
+                number = std::stoull(argv[i]);
             }
         }
 
@@ -209,8 +208,8 @@ int main(int argc, char* argv[])
             << "\n"
             << "    format\n"
             << "        -d / --dec (default)\n"
-            << "        -h / --hex\n"
-            << "        -o / --oct\n"
+            << "        -h / --hex / 0x...\n"
+            << "        -o / --oct / 0...\n"
             << "        -b / --bin" << std::endl;
         return -1;
     }
