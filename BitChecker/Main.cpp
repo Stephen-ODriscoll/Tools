@@ -33,6 +33,13 @@ T max(T left, T right)
     return (left < right) ? right : left;
 }
 
+std::string toOct(unsigned long long number)
+{
+    std::stringstream ss{};
+    ss << std::oct << number;
+    return "0" + ss.str();
+}
+
 std::string toDec(unsigned long long number)
 {
     std::stringstream ss{};
@@ -45,13 +52,6 @@ std::string toHex(unsigned long long number)
     std::stringstream ss{};
     ss << std::hex << number;
     return "0x" + ss.str();
-}
-
-std::string toOct(unsigned long long number)
-{
-    std::stringstream ss{};
-    ss << std::oct << number;
-    return "0" + ss.str();
 }
 
 int main(int argc, char* argv[])
@@ -126,22 +126,22 @@ int main(int argc, char* argv[])
             throw std::exception("No argument found for number or 0 was given");
         }
 
+        std::string binString{};
+        const auto octString{ toOct(number) };
         const auto decString{ toDec(number) };
         const auto hexString{ toHex(number) };
-        const auto octString{ toOct(number) };
-        std::string binString{};
 
-        const auto decSize{ max(strlen(DEC_COLUMN), decString.size()) };
-        const auto hexSize{ max(strlen(HEX_COLUMN), hexString.size()) };
-        const auto octSize{ max(strlen(OCT_COLUMN), octString.size()) };
         const auto indSize{ strlen(IND_COLUMN) };
         const auto binSize{ strlen(BIN_COLUMN) };
+        const auto octSize{ max(strlen(OCT_COLUMN), octString.size()) };
+        const auto decSize{ max(strlen(DEC_COLUMN), decString.size()) };
+        const auto hexSize{ max(strlen(HEX_COLUMN), hexString.size()) };
 
         std::vector<std::string> rows{};
         for (
             unsigned long long bit{ 1 }, index{};
             bit != 0 && bit <= number;
-            bit *= 2, ++index)
+            bit <<= 1, ++index)
         {
             const auto hasBit{ !!(number & bit) };
 
@@ -153,20 +153,25 @@ int main(int argc, char* argv[])
                 ss
                     << std::left << std::setw(indSize) << index << SEPARATOR
                     << std::left << std::setw(binSize) << hasBit << SEPARATOR
+                    << std::left << std::setw(octSize) << toOct(bit) << SEPARATOR
                     << std::left << std::setw(decSize) << toDec(bit) << SEPARATOR
-                    << std::left << std::setw(hexSize) << toHex(bit) << SEPARATOR
-                    << std::left << std::setw(octSize) << toOct(bit);
+                    << std::left << std::setw(hexSize) << toHex(bit);
 
                 rows.push_back(ss.str());
             }
         }
 
+        if (binString.empty())
+        {
+            binString = "0";
+        }
+
         // Actual numbers
         std::cout
-            << DEC_TITLE " = " << decString << "\n"
-            << HEX_TITLE " = " << hexString << "\n"
+            << BIN_TITLE " = " << binString << "\n"
             << OCT_TITLE " = " << octString << "\n"
-            << BIN_TITLE " = " << (binString.empty() ? "0" : binString) << std::endl;
+            << DEC_TITLE " = " << decString << "\n"
+            << HEX_TITLE " = " << hexString << std::endl;
 
         if (!rows.empty())
         {
@@ -175,17 +180,17 @@ int main(int argc, char* argv[])
                 << "\n"
                 << std::left << std::setw(indSize) << IND_COLUMN << SEPARATOR
                 << std::left << std::setw(binSize) << BIN_COLUMN << SEPARATOR
+                << std::left << std::setw(octSize) << OCT_COLUMN << SEPARATOR
                 << std::left << std::setw(decSize) << DEC_COLUMN << SEPARATOR
-                << std::left << std::setw(hexSize) << HEX_COLUMN << SEPARATOR
-                << std::left << std::setw(octSize) << OCT_COLUMN << std::endl;
+                << std::left << std::setw(hexSize) << HEX_COLUMN << std::endl;
 
             // Underline for the header
             std::cout
                 << std::left << std::setw(indSize) << std::setfill(HEADER_CHAR) << "" << HEADER_SEP
                 << std::left << std::setw(binSize) << std::setfill(HEADER_CHAR) << "" << HEADER_SEP
+                << std::left << std::setw(octSize) << std::setfill(HEADER_CHAR) << "" << HEADER_SEP
                 << std::left << std::setw(decSize) << std::setfill(HEADER_CHAR) << "" << HEADER_SEP
-                << std::left << std::setw(hexSize) << std::setfill(HEADER_CHAR) << "" << HEADER_SEP
-                << std::left << std::setw(octSize) << std::setfill(HEADER_CHAR) << "" << std::endl;
+                << std::left << std::setw(hexSize) << std::setfill(HEADER_CHAR) << "" << std::endl;
 
             // Rows, each row represents information about a bit
             for (auto it{ rows.rbegin() }; it < rows.rend(); ++it)
